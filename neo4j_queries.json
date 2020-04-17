@@ -1,11 +1,11 @@
 ﻿{
     "queries": [		
         {
-            "name": "All groups with Admin in the name",
+            "name": "01 All groups with Admin in the name",
             "query": "Match (n:Group) WHERE n.name CONTAINS 'ADMIN'  RETURN n.name AS Admingroups"
         },
         {
-            "name": "Kerberoastable users",
+            "name": "02 Kerberoastable users",
             "query": "MATCH (n:User) WHERE n.hasspn=true RETURN n.name AS KerberoastableUsers"
         }
 	]
