@@ -1,4 +1,4 @@
-﻿{
+{
     "queries": [		
         {
             "name": "01 All groups with Admin in the name",
@@ -7,6 +7,39 @@
         {
             "name": "02 Kerberoastable users",
             "query": "MATCH (n:User) WHERE n.hasspn=true RETURN n.name AS KerberoastableUsers"
+        },
+		        {
+            "name": "03 Find constrained delegation",
+            "query": "MATCH p=(u:User)-[:AllowedToDelegate]->(c:Computer) RETURN c.name"
+        },
+        {
+            "name": "04 Find Servers where Domain Users can RDP",
+            "query": "MATCH p=(g:Group {name:'DOMAIN USERS@REMONDIS-DE.LOCAL'})-[:CanRDP]->(c:Computer) WHERE c.operatingsystem CONTAINS 'Server' return c.name"
+        },
+		{
+            "name": "05 Find Workstations where Domain Users can RDP",
+            "query": "match p=(g:Group {name:'DOMAIN USERS@REMONDIS-DE.LOCAL'})-[:CanRDP]->(c:Computer) where NOT c.operatingsystem CONTAINS 'Server' return c.name"
+        },
+		{
+            "name": "06 Find what groups can RDP",
+            "query": "MATCH p=(m:Group)-[r:CanRDP]->(n:Computer) RETURN m.name"
+        },
+		{
+            "name": "07 Find Computers where Domain Users are Local Admin",
+            "query": "MATCH p=(m:Group {name:'DOMAIN USERS@REMONDIS-DE.LOCAL'})-[:AdminTo]->(n:Computer) RETURN n.name"
+        },
+		{
+            "name": "08 Find all computers with Unconstrained Delegation",
+            "query": "MATCH (c:Computer {unconstraineddelegation:true}) return c.name"
+		},
+		{
+            "name": "09 Find all computers with unsupported operating systems",
+            "query": "MATCH (H:Computer) WHERE H.operatingsystem =~ '.*(2000|2003|2008|xp|vista|7|me).*' RETURN H.name"
+        },
+		{
+            "name": "10 Find Domain Admin Logons to non-Domain Controllers",
+            "query": "MATCH (c:Computer)-[:MemberOf]->(t:Group) WHERE NOT t.name STARTS WITH 'DOMAIN CONTROLLERS' WITH c as NonDC MATCH p=(NonDC)-[:HasSession]->(n:User)-[:MemberOf]-> (g:Group) WHERE g.name STARTS WITH 'DOMAIN ADMINS' RETURN NonDC.name"
         }
 	]
 }
+
